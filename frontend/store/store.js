@@ -3,11 +3,11 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
-
+import EmployeeSlice from "./employeeSlice"
 import authSlice from "./authSlice";
+import projectSlice from "./projectSlice"
 
-
-
+import hiringSlice from "./HiringSlice";
 
 const persistConfig = {
   key: "root",
@@ -17,6 +17,9 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
     authentication: authSlice,
+    employees: EmployeeSlice,
+    projects: projectSlice,
+    hiring: hiringSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

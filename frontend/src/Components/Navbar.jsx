@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <div> 
-         <nav className=' bg-white/80 flex items-center w-full h-16 '>
+         <nav className=' bg-white/100 flex items-center w-full h-16 '>
             <div>
             <Icon/>
             </div>

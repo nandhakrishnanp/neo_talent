@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
-  const { username, password, email, fullName, position, department, salary } =
+  const { username, password, email, fullName, position, department, salary , skills , certification , projects } =
     req.body;
 
   if (
@@ -38,6 +38,10 @@ const registerUser = async (req, res) => {
       position: position,
       department: department,
       salary: salary,
+        skills: skills,
+        certificatios: certification,
+        projects: projects
+
     });
     newUser.save();
     return res
@@ -47,6 +51,55 @@ const registerUser = async (req, res) => {
     res.json({ msg: "Registration Failed" }).status(400);
   }
 };
+
+const addmany = async (req, res) => {
+    const { data } = req.body;
+    console.log(data);
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const users = await Promise.all(data.map(async (item) => {
+            const hashedpassword = await bcrypt.hash(item.password, salt);
+            return {
+                empid: Math.floor(Math.random() * 1000000),
+                userName: item.userName,
+                password: hashedpassword,
+                email: item.email,
+                about: item.about,
+                name: item.name,
+                position: item.position,
+                department: item.department,
+                salary: item.salary,
+                skills: item.skills,
+                certificatios: item.certificatios,
+                projects: item.projects
+            };
+        }));
+        await User.insertMany(users);
+        res.json({ msg: "Data added successfully" }).status(200);
+    } catch (error) {
+        console.error("Error adding multiple users:", error);
+        res.status(400).json({ msg: "Failed to add users", error: error.message });
+    }
+};
+
+
+const getAllEmployees = async (req,res)=>{
+    const employees = await User.find();
+   
+    res.json(employees).status(200);
+}
+const getEmployeeById = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+    
+    const employee = await User.findOne({ empid: id });
+    if (employee) {
+        res.json(employee).status(200);
+    } else {
+        res.json({ msg: "Employee not found" }).status(404);
+    }
+}
 
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
@@ -60,6 +113,7 @@ const loginUser = async (req, res) => {
         .json({
           msg: "Login successfull",
           token: token,
+          empid : user.empid
         })
         .status(200);
     } else {
@@ -147,4 +201,5 @@ const loginHr = async (req, res) => {
 
 
 
-module.exports ={ registerUser, loginUser , registerHr, loginHr};
+
+module.exports ={ registerUser, loginUser , registerHr, loginHr , addmany ,getAllEmployees ,getEmployeeById};

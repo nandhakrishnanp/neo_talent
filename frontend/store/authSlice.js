@@ -7,6 +7,7 @@ const intialState = {
   status: "idle",
   error: null,
   token: null,
+empid:null
 };
 
 const loginUser = createAsyncThunk("auth/loginUser", async (data) => {
@@ -18,10 +19,11 @@ const loginEmployee = createAsyncThunk("auth/loginEmployee", async (data) => {
     const response = await axiosInstance.post("/api/auth/loginuser", data);
     return response.data;
     });
-
+  
 const authSlice = createSlice({
   name: "authentication",
   initialState: intialState,
+ 
   reducers: {
     login: (state, action) => {
       state.isLogin = true;
@@ -38,6 +40,7 @@ const authSlice = createSlice({
         if (action.payload.msg === "Login successfull") {
           state.isLogin = true;
           state.token = action.payload.token;
+        
           toast.success("Login Successful");
         } else {
             toast.error(action.payload.msg);
@@ -57,6 +60,10 @@ const authSlice = createSlice({
               state.isLogin = true;
               state.token = action.payload.token;
               toast.success("Login Successful");
+              if(action.payload.empid ){
+                console.log("emp id "+action.payload.empid);
+                localStorage.setItem("empid",action.payload.empid);
+              }
             } else {
                 toast.error(action.payload.msg);
               state.isLogin = false;

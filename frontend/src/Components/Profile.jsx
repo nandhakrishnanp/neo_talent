@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from 'react'
-import Navbar from '../Components/Navbar'
-import UserSidebar from '../Components/UserSidebar'
-import axiosInstance from '../../axiosConfig'
+import React, { useEffect, useState } from "react";
+import Navbar from "./Navbar";
+import SIdebar from "./SIdebar";
+import { useSelector } from "react-redux";
+import { selectAllEmployees } from "../../store/employeeSlice";
+import { useParams } from "react-router-dom";
 
+const Profile = () => {
+  const { id } = useParams();
+  const [currentEmployee, setCurrentEmployee] = useState({});
+  const allEmployess = useSelector(selectAllEmployees);
+  useEffect(() => {
+    console.log(id);
+    const employee = allEmployess.find((employee) => employee._id === id);
+    setCurrentEmployee(employee);
+  }, []);
 
-const Home = () => {
-     const [ currentEmployee, setUser] = useState({});
-
-     const getUserbyId = async () => {
-
-        const id = localStorage.getItem('empid');
-        console.log(id);
-        const response = await axiosInstance.get(`/api/auth/getemployeebyid/${id}`);
-        setUser(response.data);
-     }
-     useEffect(()=>{
-        getUserbyId();
-     },[])
-
-  
   return (
-    <div>
-        <Navbar/>
-        <div className=' flex'>
-        <UserSidebar/>
+    <div className=" h-screen  text-xl   ">
+      <Navbar />
+      <div className=" flex ">
+        <SIdebar />
         <div className=" w-[80%]">
           <h1 className=" ps-5 text-xl font-semibold  font-poppins  ">
             {" "}
@@ -60,7 +56,7 @@ const Home = () => {
                  <h1 className=" pt-5 ps-5 text-xl font-semibold  font-poppins  ">
                   Skills:
                 </h1>
-                <div className="flex  flex-wrap gap-4 px-4 ">
+                <div className="flex gap-4 px-4 ">
                   { currentEmployee && currentEmployee.skills && currentEmployee.skills.map((skill) => (
                     <div>
                       <p className="p-2  m-2 font-poppins  rounded-xl  text-white bg-Primary text-sm">
@@ -112,12 +108,11 @@ const Home = () => {
                </div>
                   
             </div>
-          ) }
+          )}
         </div>
-        </div>
-        
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Profile;
