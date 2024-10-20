@@ -35,7 +35,7 @@ const EmployeeSchema = new mongoose.Schema({
   },
   salary: {
     type: Number,
-    required: true,
+    
   },
   certificatios: {
     type: [String],

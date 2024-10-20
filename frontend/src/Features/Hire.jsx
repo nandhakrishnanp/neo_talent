@@ -5,16 +5,20 @@ import {
   selectAllHiring,
   getHiringData,
   addHiring,
+  selectAllApplicant,
+  getApplicant
 } from "../../store/HiringSlice";
 import SIdebar from "../Components/SIdebar";
 import mail from "../assets/mail.svg";
 import axiosInstance from "../../axiosConfig";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 
 const Hire = () => {
   const dispatch = useDispatch();
   const allHirings = useSelector(selectAllHiring);
+  const allApplicant = useSelector(selectAllApplicant);
+
   const [isOpen, setIsOpen] = useState(false);
 
   //   {
@@ -28,33 +32,31 @@ const Hire = () => {
   const [jobId, setJobId] = useState("");
   const [email, setEmail] = useState("");
   const [issendmail, setIssendmail] = useState(false);
-
+   const nav = useNavigate();
   const sendMail = async (email) => {
-    if(email && jobId){
-        let userId = Math.floor(Math.random() * 100000);
-        const response = await axiosInstance.post("/email", {
-             email,
-             jobId,
-             userId
-        });
-     
-     if (response) {
-         toast.success("Mail Sent Successfully");
-     }
-     else {
-         toast.error("Mail not sent");
-     }
-    }
-    else{
-        toast.error("Please fill the email field")
-    }
-    
+    if (email && jobId) {
+      let userId = Math.floor(Math.random() * 100000);
+      const response = await axiosInstance.post("/email", {
+        email,
+        jobId,
+        userId,
+      });
 
-  }
-  
+      if (response) {
+        toast.success("Mail Sent Successfully");
+      } else {
+        toast.error("Mail not sent");
+      }
+    } else {
+      toast.error("Please fill the email field");
+    }
+  };
+
   useEffect(() => {
     dispatch(getHiringData());
+    dispatch(getApplicant());
   }, [allHirings]);
+
 
   return (
     <div className="">
@@ -73,7 +75,6 @@ const Hire = () => {
                   onClick={() => {
                     setIssendmail(false);
                     sendMail(email);
-                   
                   }}
                   className="bg-slate-50 w-1/2 mt-2  text-Primary font-poppins font-bold p-2 rounded-lg m-2"
                 >
@@ -151,9 +152,10 @@ const Hire = () => {
               </h2>
               <div className=" ">
                 <button
-                  onClick={() => {setIsOpen(true)
-                    setEmail("")
-                    setJobId("")
+                  onClick={() => {
+                    setIsOpen(true);
+                    setEmail("");
+                    setJobId("");
                   }}
                   className=" bg-Primary text-white font-poppins px-2 py-1 rounded-lg"
                 >
@@ -179,9 +181,8 @@ const Hire = () => {
                       onClick={() => {
                         setEmail(hiring.email);
                         setJobId(hiring.jobId);
-                        setIssendmail(true)
-                    }
-                    }
+                        setIssendmail(true);
+                      }}
                       className=" cursor-pointer w-7"
                       src={mail}
                       alt=""
@@ -189,6 +190,28 @@ const Hire = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div>
+
+            <h2 className="px-4 py-3 text-lg font-poppins text-Primary font-semibold">
+                Application Details completed : 
+            </h2>
+              <div className=" flex gap-2 flex-wrap w-full pt-0 " >
+              {
+                allApplicant && allApplicant.map((applicant) => (
+                        <div className="bg-slate-200 p-5 min-w-[40%] m-2 rounded-lg ring-1 ring-black  ">
+                          <p className=" font-poppins  font-bold">{applicant.name}</p>
+                          <p className=" font-poppins ">{applicant.email}</p>
+                          <button onClick={()=> {
+                            nav(`/Application/${applicant._id}`)
+                          }} className=" bg-Primary px-2 my-2 py-1 rounded-md text-white">View Application</button>
+                        </div>
+                ))
+
+               }
+              </div>
+              
             </div>
           </div>
         </div>

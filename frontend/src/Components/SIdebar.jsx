@@ -4,6 +4,7 @@ import emplogo from "../assets/emp.svg";
 import Dash from "../assets/Dash.svg";
 import { useNavigate } from "react-router-dom";
 import hire from "../assets/hire.svg"
+import treadline from "../assets/trendline.svg"
 const SIdebar = () => {
     const nav = useNavigate();
      
@@ -49,7 +50,17 @@ const SIdebar = () => {
             Hire
           </h1>
         </div>
-        
+        <div onClick={()=>{
+            setCurrent("Insights")
+            nav('/analysis')
+
+        }} className={` flex items-center py-3 cursor-pointer  transition-all duration-150 ${ current=="Insights" ? "bg-Primary/15" :"" }   hover:bg-Primary/15 rounded-lg justify-start w-full px-4`}>
+          <img src={treadline} className=" w-6 mx-2 " alt="" />
+          
+          <h1 className="text-lg  font-poppins text-accent text-center ps-2">
+          Insights
+          </h1>
+        </div>
         
       </div>
     </div>

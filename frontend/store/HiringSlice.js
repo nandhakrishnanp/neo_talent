@@ -7,6 +7,7 @@ import axiosInstance from "../axiosConfig";
 
 const initialState = {
     hiring: [],
+   applicant : [],
     status: "idle",
     error: null,
 };
@@ -26,6 +27,16 @@ const addHiring = createAsyncThunk(
     async (data) => {
         console.log("add hiring data");
         const response = await axiosInstance.post("/jobs/addhiring", data);
+        console.log(response.data);
+        return response.data;
+    }
+);
+
+const getApplicant = createAsyncThunk(
+    "/api/getapplicant",
+    async () => {
+        console.log("get all applicant data");
+        const response = await axiosInstance.get("/jobs/applicant");
         console.log(response.data);
         return response.data;
     }
@@ -67,10 +78,28 @@ const HiringSlice = createSlice({
             console.log("error");
             console.log("error", action.error.message, action.error);
         })
+        .addCase(getApplicant.pending, (state) => {
+            state.status = "loading";
+        })
+        .addCase(getApplicant.fulfilled, (state, action) => {
+            state.status = "succeeded";
+            state.applicant = action.payload;
+            console.log("received applicant data");
+            console.log("received", action.payload);
+            
+        })
+        .addCase(getApplicant.rejected, (state, action) => {
+            state.status = "failed";
+            state.error = action.error.message;
+            console.log("error");
+            console.log("error", action.error.message, action.error);
+        })
 
     }
 })
 
 export default HiringSlice.reducer;
 export const selectAllHiring = (state) => state.hiring.hiring;
-export { getHiringData, addHiring };
+export const selectAllApplicant = (state) => state.hiring.applicant;
+
+export { getHiringData, addHiring , getApplicant };

@@ -5,7 +5,7 @@ import {
   getAllEmployeesData,
   selectAllEmployees,
 } from "../../store/employeeSlice";
-
+import plus from "../assets/plus.svg"
 import { useDispatch, useSelector } from "react-redux";
 import { all } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -44,14 +44,20 @@ const Employees = () => {
         <div className=" w-[80%]">
           <h1 className=" ps-5 text-xl font-semibold  font-poppins  ">
             {" "}
-            Available Employees :{" "}
+            Available Employees :{" "} 
+             
           </h1>
           
-            <div className=" my-2">
+            <div className=" my-2 flex gap-5  items-center justify-between px-3">
                 <input value={Search} onChange={(e)=>{
                     setSearch(e.target.value);
                 }} placeholder="Search By Skills" className=" ring-1 ring-Primary h-8 w-1/3 p-3 placeholder:text-md rounded-lg ms-3 my-2" type="text" />
+
+                <div className=" ">
+                     <img className="w-8 me-7 cursor-pointer" src={plus} alt="" />
+                </div>
             </div>
+
            
           <div className=" flex gap-4 flex-wrap justify-evenly pt-3">
             {AllEmployess &&

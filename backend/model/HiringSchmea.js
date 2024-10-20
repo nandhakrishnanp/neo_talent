@@ -28,3 +28,4 @@ const HiringSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("hiring", HiringSchema);
+

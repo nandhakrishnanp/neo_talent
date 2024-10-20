@@ -39,8 +39,10 @@ app.post("/ai", async (req, res) => {
 
 app.post("/bestemp", async (req, res) => {
   const { requirement } = req.body;
-  const prompt = `Find the top 5 best employee for the given requirement
-    ${requirement} give as json as arr of objects no \n in between objects`;
+  console.log(requirement);
+  
+  const prompt = `Find the top 5 best employee for the given requirement based on their work profile and skill matching
+    ${requirement} give as  as arr of objects no \n in between objects and <br/> tags`;
 
   const allusers = await employeemodel.find();
    const stringfiesd = JSON.stringify(allusers);
@@ -51,6 +53,7 @@ app.post("/bestemp", async (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/projects", require("./routes/projectrotes"));
 app.use("/jobs", require("./routes/HiringRoutes"));
+
 app.post("/email", async (req, res) => {
   const { email, jobId, userId } = req.body;
   console.log(email, jobId, userId);
@@ -64,6 +67,8 @@ app.post("/email", async (req, res) => {
     res.json({ msg: "Mail not sent" }).status(400);
   }
 });
+
+
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
 });

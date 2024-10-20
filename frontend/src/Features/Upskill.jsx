@@ -3,7 +3,7 @@ import SIdebar from "../Components/SIdebar";
 import Navbar from "../Components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProjects, selectAllProjects } from "../../store/projectSlice";
-
+import axiosInstance from "../../axiosConfig";
 const Upskill = () => {
   const dispatch = useDispatch();
   const [projects, setProjects] = useState([]);
@@ -13,43 +13,113 @@ const Upskill = () => {
     dispatch(getAllProjects());
     console.log("called");
   }, []);
+
+  const [result, setResult] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  
+   
   const emp = [
-    {
-      name: "Alice Johnson",
-      mainSkill: "Systems Analysis",
-      description: "Alice specializes in analyzing and designing IT systems, ensuring optimal performance and alignment with business goals. She excels at identifying system bottlenecks and proposing effective solutions."
-    },
     {
       name: "Bob Williams",
       mainSkill: "JavaScript",
-      description: "Bob is a front-end development expert with a deep understanding of JavaScript frameworks. He focuses on building responsive and user-friendly interfaces for the helpdesk portal, ensuring smooth user experience."
+      description:
+        "Bob is a front-end development expert with a deep understanding of JavaScript frameworks. He focuses on building responsive and user-friendly interfaces for the helpdesk portal, ensuring smooth user experience.",
+      eligibilityPercentage: 90,
     },
     {
       name: "Catherine Lee",
       mainSkill: "Node.js",
-      description: "Catherine is proficient in server-side programming with Node.js, responsible for building scalable back-end solutions that handle real-time ticket tracking and communication between users and support teams."
+      description:
+        "Catherine is proficient in server-side programming with Node.js, responsible for building scalable back-end solutions that handle real-time ticket tracking and communication between users and support teams.",
+      eligibilityPercentage: 88,
+    },
+    {
+      name: "Alice Johnson",
+      mainSkill: "Systems Analysis",
+      description:
+        "Alice specializes in analyzing and designing IT systems, ensuring optimal performance and alignment with business goals. She excels at identifying system bottlenecks and proposing effective solutions.",
+      eligibilityPercentage: 85,
     },
     {
       name: "David Kim",
       mainSkill: "MongoDB",
-      description: "David is a database management expert specializing in MongoDB. He designs and maintains the database, ensuring secure storage of ticket information and efficient query performance for real-time tracking."
+      description:
+        "David is a database management expert specializing in MongoDB. He designs and maintains the database, ensuring secure storage of ticket information and efficient query performance for real-time tracking.",
+      eligibilityPercentage: 83,
     },
     {
       name: "Ethan Garcia",
       mainSkill: "IT Infrastructure",
-      description: "Ethan manages the IT infrastructure, ensuring the availability and reliability of hardware and network components critical for the smooth operation of the helpdesk system. He is the go-to person for resolving complex infrastructure issues."
-    }
+      description:
+        "Ethan manages the IT infrastructure, ensuring the availability and reliability of hardware and network components critical for the smooth operation of the helpdesk system. He is the go-to person for resolving complex infrastructure issues.",
+      eligibilityPercentage: 80,
+    },
   ];
   
+
+  const [bestFitEmployee, setBestFitEmployee] = useState(null);
+
+  const delayPara = (index, nextWord) => {
+    setTimeout(() => {
+      setResult((prev) => prev + nextWord);
+    }, 75 * index);
+  };
+  const fomateArray = (response) => {
+    if (!response) {
+      console.error("Invalid response data");
+      return;
+    }
+
+    let responseArray = response.split("**");
+    let newResponse = "";
+    for (let i = 0; i < responseArray.length; i++) {
+      if (i === 0 || i % 2 !== 1) {
+        newResponse += responseArray[i];
+      } else {
+        newResponse += `<b> ${responseArray[i]} </b>`;
+      }
+    }
+
+    let newResponse2 = newResponse.split("*").join("</br>");
+    let newResponseArray = newResponse2.split(" ");
+    for (let i = 0; i < newResponseArray.length; i++) {
+      const nextWord = newResponseArray[i];
+      delayPara(i, nextWord + " ");
+    }
+
+    setIsLoading(false);
+  };
+
+  const getBestFitEmployee = async (selectedProject) => {
+    try {
+      const res = await axiosInstance.post("/bestemp", {
+        requirement: selectedProject,
+      });
+      console.log(res.data);
+      fomateArray(res.data.result);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     setProjects(allprojects);
   }, [allprojects]);
-  return (
+
+  // useEffect(() => {
+  //   if (selectedProject) {
+  //     setIsLoading(true);
+  //     getBestFitEmployee(selectedProject);
+  //   }
+  // }, [selectedProject]);
+   return (
     <div>
       <Navbar />
       <div className=" flex  ">
         <SIdebar />
-        <div className=" w-[80%]">
+        <div className=" w-[80%] min-h-screen mb-24">
           <h1 className="text-2xl font-bold text-gray-700 p-5">
             Skill Gap Analysis
           </h1>
@@ -97,45 +167,65 @@ const Upskill = () => {
                         <h2 className="text-lg py-3 font-bold font-poppins">
                           Skills Required
                         </h2>
-                        {selectedProject && selectedProject.skills ?
-                        <div>
+                        {selectedProject && selectedProject.skills ? (
+                          <div>
                             {selectedProject.skills.map((skill) => (
-                                <p className="font-poppins py-2 bg-Primary text-white my-1 p-2  rounded-lg">{skill}</p>
+                              <p className="font-poppins py-2 bg-Primary text-white my-1 p-2  rounded-lg">
+                                {skill}
+                              </p>
                             ))}
-
-                        </div> :null}
+                          </div>
+                        ) : null}
                       </div>
                       <div>
                         <h2 className="text-lg py-3 font-bold font-poppins">
-                            Responsibilities
+                          Responsibilities
                         </h2>
                         <p className="font-poppins">
-                          {selectedProject ?
+                          {selectedProject ? (
                             <div>
-                                {selectedProject.projectresponsibilities.map((resp) => (
-                                <p className="font-poppins py-2 bg-Primary text-white my-1 p-2  rounded-lg">{resp}</p>
-                                ))}
+                              {selectedProject.projectresponsibilities.map(
+                                (resp) => (
+                                  <p className="font-poppins py-2 bg-Primary text-white my-1 p-2  rounded-lg">
+                                    {resp}
+                                  </p>
+                                )
+                              )}
                             </div>
-                          :null}
+                          ) : null}
                         </p>
                       </div>
-
                     </div>
                   </div>
                   <h2 className="px-4 py-3 text-lg font-poppins text-Primary font-semibold">
-                   Best Fit Employees for this Role
+                    Best Fit Employees for this Role
                   </h2>
-                    <div>
-                        {emp.map((employee) => (
-                            <div className="bg-slate-200 p-5 m-2 rounded-lg">
-                                <h2 className="text-lg font-bold font-poppins"> Name : {employee.name}</h2>
-                                <p className="text-Primary font-poppins"> Role : {employee.mainSkill}</p>
-                                <p className="text-gray-500 font-poppins">{employee.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                       
+                  <div>
+                    {emp.map((employee) => (
+                      <div className="bg-slate-200 p-4  flex items-center justify-between pe-8 m-2 rounded-lg">
+
+                        <div>
+                        <h2 className="text-lg font-bold font-poppins">
+                          {" "}
+                          Name : {employee.name}
+                        </h2>
+                        <p className="text-Primary font-poppins">
+                          {" "}
+                          MainSkill : {employee.mainSkill}
+                        </p>
+                        
+                        </div>
+                        <div>
+                          <p className=" font-poppins"> Eligibility Percentage : {employee.eligibilityPercentage} %</p>
+                        </div>
+                      
+                      </div>
+                    ))}
+
                    
+
+                   
+                  </div>
                 </div>
               )}
             </div>

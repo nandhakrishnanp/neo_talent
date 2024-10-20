@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 const intialState = {
   isLogin: false,
   status: "idle",
+  isHr:false,
   error: null,
   token: null,
 empid:null
@@ -40,7 +41,7 @@ const authSlice = createSlice({
         if (action.payload.msg === "Login successfull") {
           state.isLogin = true;
           state.token = action.payload.token;
-        
+          state.isHr = true;
           toast.success("Login Successful");
         } else {
             toast.error(action.payload.msg);
@@ -52,6 +53,7 @@ const authSlice = createSlice({
         const response = action.payload;
         state.isLogin = false;
         state.token = null;
+      
         toast.error(response.msg);
       });
         builder
@@ -59,6 +61,7 @@ const authSlice = createSlice({
             if (action.payload.msg === "Login successfull") {
               state.isLogin = true;
               state.token = action.payload.token;
+              state.isHr = false;
               toast.success("Login Successful");
               if(action.payload.empid ){
                 console.log("emp id "+action.payload.empid);
@@ -83,4 +86,5 @@ export const { login, logout } = authSlice.actions;
 export { loginUser , loginEmployee };
 export default authSlice.reducer;
 export const selectIsLogin = (state) => state.authentication.isLogin;
+export const selectIsHr = (state) => state.authentication.isHr;
 export const selectToken = (state) => state.authentication.token;
